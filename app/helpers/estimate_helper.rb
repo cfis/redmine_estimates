@@ -1,6 +1,11 @@
 module EstimateHelper
   def css_height(estimate)
-    hours = [estimate.estimated_hours, 1.2].max
+    hours = if estimate.day >= Date.today
+      [estimate.estimated_hours, 1.2].max
+    else
+      [estimate.hours, 1.2].max
+    end
+
     "#{number_with_precision(hours, :precision => 2)}em"
   end
 
@@ -11,11 +16,15 @@ module EstimateHelper
     if estimate.start_date >= Date.today
       'accurate'
     elsif estimate.estimated_hours == 0 or estimate.hours == 0
-     'inaccurate'
-    elsif percent <= 0.15 or diff < 1.0
+      'underestimate'
+    elsif diff < 1.0
       'accurate'
+    elsif estimate.estimated_hours < estimate.hours and percent <= 0.15
+      'accurate'
+    elsif estimate.estimated_hours > estimate.hours and percent <= 0.20
+      'overestimate'
     else
-      'inaccurate'
+      'underestimate'
     end
   end
 
