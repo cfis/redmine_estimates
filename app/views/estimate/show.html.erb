@@ -1,0 +1,66 @@
+<style type="text/css">
+  table.estimate {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+  }
+
+  table.estimate td {
+    white-space: nowrap;
+    border: none;
+    border-bottom: 1px solid white;
+    margin: 0.3em 0.2em;
+  }
+
+  tr.on_time {
+    background-color: green;
+  }
+
+  tr.over_time {
+    background-color: red;
+  }
+
+  tr.total {
+    background-color: blue;
+    height: auto;
+  }
+
+  .estimate a {
+    color: white;
+  }
+</style>
+
+<h2><%= l(:label_spent_time) %></h2>
+
+<% form_remote_tag(:url => {}, :html => {:method => :get, :id => 'query_form'}, :method => :get, :update => 'content') do %>
+  <div style="float:right;">
+    <%= link_to_remote ('&#171; ' + (@month==1 ? "#{month_name(12)} #{@year-1}" : "#{month_name(@month-1)}")),
+                            {:update => "content", :url => { :year => (@month==1 ? @year-1 : @year), :month =>(@month==1 ? 12 : @month-1) }},
+                            {:href => url_for(:action => 'show', :year => (@month==1 ? @year-1 : @year), :month =>(@month==1 ? 12 : @month-1))}
+                            %> |
+    <%= link_to_remote ((@month==12 ? "#{month_name(1)} #{@year+1}" : "#{month_name(@month+1)}") + ' &#187;'),
+                            {:update => "content", :url => { :year => (@month==12 ? @year+1 : @year), :month =>(@month==12 ? 1 : @month+1) }},
+                            {:href => url_for(:action => 'show', :year => (@month==12 ? @year+1 : @year), :month =>(@month==12 ? 1 : @month+1))}
+                            %>
+  </div>
+
+  <div class="buttons">
+    <label>Month:</label>
+    <%= select_month(@month, :prefix => "month", :discard_type => true) %>
+    <%= select_year(@year, :prefix => "year", :discard_type => true) %>
+
+    <label>Group By:</label>
+    <%= select_tag 'group_by', options_for_select([[l(:label_none), 'none'],
+                                                    [l(:label_project), 'project'],
+                                                    [l(:label_user), 'user'],
+                                                    [l(:label_version), 'version']], @group_by),
+                                                :onchange => "this.form.onsubmit();" %>
+
+    <%= link_to_remote l(:button_apply),
+                       { :update => "content",
+                         :with => "Form.serialize('query_form')"
+                       }, :class => 'icon icon-checked' %>
+  </div>
+<% end %>
+
+<%= render :partial => 'calendar', :locals => {:calendar => @calendar} %>

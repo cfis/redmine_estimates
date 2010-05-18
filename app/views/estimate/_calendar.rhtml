@@ -1,0 +1,42 @@
+<table class="cal">
+  <thead>
+    <tr><td></td><% 7.times do |i| %><th><%= day_name( (calendar.first_wday+i)%7 ) %></th><% end %></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <% day = calendar.startdt
+      while day <= calendar.enddt %>
+      <%= "<th>#{day.cweek}</th>" if day.cwday == calendar.first_wday %>
+      <td class="<%= day.month==calendar.month ? 'even' : 'odd' %><%= ' today' if Date.today == day %>">
+      <p class="day-num"><%= day.day %></p>
+
+      <table class="estimate">
+        <% estimated = 0
+           hours = 0 %>
+        <% calendar.events_on(day).sort_by(&:id).each do |estimate| %>
+        <% estimated += estimate.estimated_hours
+           hours += estimate.hours %>
+          <tr class="<%= estimate_classes(estimate) %>" style="height: <%= css_height(estimate) %>">
+            <td><%= issues_link(estimate) %>:</td>
+            <td><%= format_hours(estimate.estimated_hours) %></td>
+            <td><% if estimate.hours %>
+                  (<%= format_hours(estimate.hours) %>)
+                <% end %>
+            </td>
+          </tr>
+        <% end %>
+        <% if @group_by != 'none' %>
+          <tr class="total">
+            <td>Total:</td>
+            <td><%=  format_hours(estimated) %></td>
+            <td><%= format_hours(hours) %></td>
+          </tr>
+        <% end %>
+      </table>
+      </td>
+      <%= '</tr><tr>' if day.cwday==calendar.last_wday and day!=calendar.enddt %>
+      <% day = day + 1
+      end %>
+    </tr>
+  </tbody>
+</table>
