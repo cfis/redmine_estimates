@@ -17,8 +17,7 @@ class Estimate < ActiveRecord::Base
 
       'user' => {:id => "users.id",
                  :label => "users.firstname",
-                 :joins => 'JOIN issues ON estimates_view.issue_id = issues.id
-                            JOIN users on issues.assigned_to_id = users.id',
+                 :joins => 'JOIN users on estimates_view.user_id = users.id',
                  :group => 'users.firstname'},
 
       'version' => {:id => "versions.id",
