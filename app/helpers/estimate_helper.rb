@@ -8,11 +8,11 @@ module EstimateHelper
     diff = (estimate.estimated_hours - estimate.hours).abs
     percent = diff/estimate.estimated_hours
 
-    if estimate.estimated_hours == 0 or estimate.hours == 0
-     'inaccurate'
-    elsif percent <= 0.15 or estimate.start_date >= Date.today
+    if estimate.start_date >= Date.today
       'accurate'
-    elsif diff < 1.0
+    elsif estimate.estimated_hours == 0 or estimate.hours == 0
+     'inaccurate'
+    elsif percent <= 0.15 or diff < 1.0
       'accurate'
     else
       'inaccurate'
