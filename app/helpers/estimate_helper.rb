@@ -15,6 +15,8 @@ module EstimateHelper
 
     if estimate.start_date >= Date.today
       'accurate'
+    elsif estimate.estimated_hours == 0 or estimate.hours == 0 and diff <= 0.3
+      'accurate'
     elsif estimate.estimated_hours == 0 or estimate.hours == 0
       'underestimate'
     elsif diff < 1.0
