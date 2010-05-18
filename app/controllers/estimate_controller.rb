@@ -8,7 +8,7 @@ class EstimateController < ApplicationController
 
   def show
     create_calendar
-    @group_by = params[:group_by] || 'none'
+    @group_by = params[:group_by] || 'project'
     @calendar.events = Estimate.estimates(@calendar.startdt, @calendar.enddt, @group_by)
     respond_to do |format|
       format.html { render :layout => !request.xhr? }

@@ -13,7 +13,7 @@
       <table class="estimate">
         <% estimated = 0
            hours = 0 %>
-        <% calendar.events_on(day).sort_by(&:id).each do |estimate| %>
+        <% calendar.events_on(day).sort_by(&:label).each do |estimate| %>
         <% estimated += estimate.estimated_hours
            hours += estimate.hours %>
           <tr class="<%= estimate_classes(estimate) %>" style="height: <%= css_height(estimate) %>">
