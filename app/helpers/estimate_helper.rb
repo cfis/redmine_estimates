@@ -5,10 +5,14 @@ module EstimateHelper
   end
 
   def estimate_classes(estimate)
-    diff = (estimate.estimated_hours - estimate.hours)
-    percent = diff.abs/estimate.estimated_hours
+    diff = (estimate.estimated_hours - estimate.hours).abs
+    percent = diff/estimate.estimated_hours
 
-    if percent <= 0.15 or estimate.start_date >= Date.today
+    if estimate.estimated_hours == 0 or estimate.hours == 0
+     'inaccurate'
+    elsif percent <= 0.15 or estimate.start_date >= Date.today
+      'accurate'
+    elsif diff < 1.0
       'accurate'
     else
       'inaccurate'
