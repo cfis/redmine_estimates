@@ -35,8 +35,39 @@ module EstimateHelper
   def issues_link(estimate)
     label = estimate.label.match(/^(\S*)/)[1]
     
-    url_options = {:controller => 'issues',
-                   :action => 'list'}
+    url_options = {'controller' => 'issues',
+                   'action' => 'index',
+                   'set_filter' => 1,
+                   'operators[status_id]' => '*',
+                   'values[status_id][]' => '1'}
+
+    fields = ['fields[]=status_id']
+
+    if estimate.start_date and estimate.due_date
+      url_options.merge!('values[start_date][]' => Date.today - estimate.start_date,
+                         'values[due_date][]' => Date.today - estimate.day)
+
+      fields << 'fields[]=start_date'
+
+      if estimate.min_start_date < estimate.day
+        url_options.merge!('operators[start_date]' => '>t-',
+                           'values[start_date][]' => Date.today - estimate.min_start_date - 1)
+      else
+        url_options.merge!('operators[start_date]' => 't-',
+                           'values[start_date][]' => Date.today - estimate.min_start_date)
+      end
+
+      if estimate.max_due_date < Date.today
+        fields << 'fields[]=due_date'
+        if estimate.max_due_date > estimate.day
+          url_options.merge!('operators[due_date]' => '<t-',
+                             'values[due_date][]' => Date.today - estimate.max_due_date + 1)
+        else
+          url_options.merge!('operators[due_date]' => 't-',
+                             'values[due_date][]' => Date.today - estimate.max_due_date)
+        end
+      end
+    end
 
     case estimate.group_by
       when 'project'
@@ -47,6 +78,12 @@ module EstimateHelper
         url_options[:version_id] = estimate.id
     end
 
-    link_to(label, url_options, :title => (h estimate.label))
+    url = url_for(url_options)
+    
+    # Need to manually add in fields (can't put the same key into
+    # a hash twice).
+    url += '&' + fields.join('&')
+
+    link_to(label, url, :title => (h estimate.label))
   end
 end

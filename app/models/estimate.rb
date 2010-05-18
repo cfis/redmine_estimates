@@ -37,6 +37,8 @@ class Estimate < ActiveRecord::Base
              #{group[:label]} AS label,
              max(#{group[:id]}) AS id,
              '#{group_by}' AS group_by,
+             min(estimates_view.start_date) AS start_date,
+             max(estimates_view.due_date) AS due_date,
              sum(estimates_view.estimated_hours) AS estimated_hours,
              sum(estimates_view.hours) AS hours
       FROM estimates_view
@@ -52,11 +54,19 @@ class Estimate < ActiveRecord::Base
   end
 
   # For calendar compatability
+  def start_date
+    self.day
+  end
+
   def due_date
     self.day
   end
 
-  def start_date
-    self.day
+  def min_start_date
+    self['start_date'] || self.day
+  end
+
+  def max_due_date
+    self['due_date'] || self.day
   end
 end
