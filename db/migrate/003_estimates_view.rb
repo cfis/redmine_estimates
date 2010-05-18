@@ -22,8 +22,8 @@ class EstimatesView < ActiveRecord::Migration
                    0 AS estimated_hours, sum(time_entries.hours) AS hours
             FROM issues
             JOIN time_entries ON issues.id = time_entries.issue_id
-            GROUP BY time_entries.spent_on, issues.id, schedule.user_id) AS schedule
-      GROUP BY schedule.day, schedule.issue_id;
+            GROUP BY time_entries.spent_on, issues.id, time_entries.user_id) AS schedule
+      GROUP BY schedule.day, schedule.issue_id, schedule.user_id;
     EOS
   end
 
