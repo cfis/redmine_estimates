@@ -18,10 +18,13 @@
            hours += estimate.hours %>
           <tr class="<%= estimate_classes(estimate) %>" style="height: <%= css_height(estimate) %>">
             <td><%= issues_link(estimate) %>:</td>
-            <td><%= format_hours(estimate.estimated_hours) %></td>
-            <td><% if estimate.hours %>
-                  (<%= format_hours(estimate.hours) %>)
-                <% end %>
+            <td>
+              <span class="<%= format_hours_css(estimate.estimated_hours, estimate.hours) %>"><%= format_hours(estimate.estimated_hours) %></span>
+            </td>
+            <td>
+              <% if day <= Date.today and estimate.hours %>
+                <span class="<%= format_hours_css(estimate.hours, estimate.estimated_hours) %>"><%= format_hours(estimate.hours) %></span>
+              <% end %>
             </td>
           </tr>
         <% end %>

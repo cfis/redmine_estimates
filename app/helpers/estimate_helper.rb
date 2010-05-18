@@ -5,18 +5,32 @@ module EstimateHelper
   end
 
   def estimate_classes(estimate)
-    if estimate.estimated_hours >= estimate.hours
-      'on_time'
+    diff = (estimate.estimated_hours - estimate.hours)
+    percent = diff.abs/estimate.estimated_hours
+
+    if percent <= 0.15 or estimate.start_date >= Date.today
+      'accurate'
     else
-      'over_time'
+      'inaccurate'
     end
   end
 
   def format_hours(hours)
-    number_with_precision(hours, :precision => 1,
-                                 :separator => '.',
-                                 :delimiter => ',')
+    if hours > 0
+      number_with_precision(hours, :precision => 1,
+                                   :separator => '.',
+                                   :delimiter => ',')
+    else
+      '-'
+    end
   end
+
+  def format_hours_css(hours, other)
+    if hours > 0 and hours > other
+      'max_value'
+    end
+  end
+
   
   def issues_link(estimate)
     label = estimate.label.match(/^(\S*)/)[1]
